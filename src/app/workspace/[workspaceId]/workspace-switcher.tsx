@@ -3,7 +3,12 @@ import { useGetWorkspaces } from "@/app/features/workspaces/api/use-get-workspac
 
 import { Button } from "@/components/ui/button"
 import { useWorkspaceId } from "@/hooks/use-workspace-id"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu"
 import { useCreateWorkspaceModal } from "@/app/features/workspaces/store/use-create-workspace-modal"
 import { Loader, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
