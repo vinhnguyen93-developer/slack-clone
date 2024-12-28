@@ -16,7 +16,7 @@ const WorkSpaceIdPage = () => {
   const workspaceId = useWorkspaceId()
   const [open, setOpen] = useCreateChannelModal()
 
-  const { data: member, isLoading: membersLoading } = useCurrentMember({ workspaceId })
+  const { data: member, isLoading: memberLoading } = useCurrentMember({ workspaceId })
   const { data: workspace, isLoading: workspaceLoading } = useGetWorkspace({ id: workspaceId })
   const { data: channels, isLoading: channelsLoading } = UseGetChannels({ workspaceId })
 
@@ -24,7 +24,7 @@ const WorkSpaceIdPage = () => {
   const isAdmin = useMemo(() => member?.role === 'admin', [member?.role])
 
   useEffect(() => {
-    if (workspaceLoading || channelsLoading || membersLoading || !member || !workspace) return
+    if (workspaceLoading || channelsLoading || memberLoading || !member || !workspace) return
 
     if (channelId) {
       router.push(`/workspace/${workspaceId}/channel/${channelId}`)
@@ -34,7 +34,7 @@ const WorkSpaceIdPage = () => {
   }, [
     isAdmin,
     member,
-    membersLoading,
+    memberLoading,
     channelId,
     workspaceLoading,
     channelsLoading,
@@ -45,7 +45,7 @@ const WorkSpaceIdPage = () => {
     setOpen
   ])
 
-  if (workspaceLoading || channelsLoading) {
+  if (workspaceLoading || channelsLoading || memberLoading) {
     return (
       <div className="flex justify-center items-center h-full flex-1 flex-col gap-2">
         <Loader className="size-6 animate-spin text-muted-foreground" />
@@ -53,7 +53,7 @@ const WorkSpaceIdPage = () => {
     )
   }
 
-  if (!workspace) {
+  if (!workspace || !member) {
     return (
       <div className="flex justify-center items-center h-full flex-1 flex-col gap-2">
         <TriangleAlert className="size-6 text-muted-foreground" />
