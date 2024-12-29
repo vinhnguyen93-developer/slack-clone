@@ -6,10 +6,11 @@ import Quill, { type QuillOptions } from 'quill';
 import { MutableRefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { Hint } from './hint';
+import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
+import { EmojiPopover } from './emoji-popover';
 
 import "quill/dist/quill.snow.css";
-import { cn } from '@/lib/utils';
 
 type EditorValue = {
   image: File | null;
@@ -130,6 +131,12 @@ const Editor = ({
     }
   }
 
+  const onEmojiSelect = (emoji: any) => {
+    const quill = quillRef.current
+
+    quill?.insertText(quill.getSelection()?.index || 0, emoji.native)
+  }
+
   const isEmpty = text.replace(/<(.|\n)*?>/g, '').trim().length === 0
 
   return (
@@ -149,16 +156,15 @@ const Editor = ({
             </Button>
           </Hint>
 
-          <Hint label='Emoji'>
+          <EmojiPopover onEmojiSelect={onEmojiSelect}>
             <Button
               disabled={disabled}
               size='iconSm'
               variant='ghost'
-              onClick={() => { }}
             >
               <Smile className='size-4' />
             </Button>
-          </Hint>
+          </EmojiPopover>
 
           {variant === 'create' && (
             <Hint label='Image'>
@@ -213,11 +219,16 @@ const Editor = ({
         </div>
       </div>
 
-      <div className='p-2 text-[10px] text-muted-foreground flex justify-end'>
-        <p>
-          <strong>Shift + Return</strong> to add a new line
-        </p>
-      </div>
+      {variant === 'create' && (
+        <div className={cn(
+          'p-2 text-[10px] text-muted-foreground flex justify-end opacity-0 transition',
+          !isEmpty && 'opacity-100'
+        )}>
+          <p>
+            <strong>Shift + Return</strong> to add a new line
+          </p>
+        </div>
+      )}
     </div>
   )
 }
