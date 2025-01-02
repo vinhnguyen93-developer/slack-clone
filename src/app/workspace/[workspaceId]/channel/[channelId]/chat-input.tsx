@@ -7,11 +7,21 @@ import { useChannelId } from "@/hooks/use-channel-id"
 import { useWorkspaceId } from "@/hooks/use-workspace-id"
 
 import { useCreateMessage } from "@/app/features/messages/api/use-create-message"
+import { useGenerateUploadUrl } from "@/app/features/upload/api/use-generate-upload-url"
+
+import { Id } from "../../../../../../convex/_generated/dataModel"
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false })
 
 interface ChatInputProps {
   placeholder: string
+}
+
+type CreateMessageValues = {
+  channelId: Id<'channels'>;
+  workspaceId: Id<'workspaces'>;
+  body: string;
+  image: Id<'_storage'> | undefined;
 }
 
 export const ChatInput = ({ placeholder }: ChatInputProps) => {
@@ -24,6 +34,7 @@ export const ChatInput = ({ placeholder }: ChatInputProps) => {
   const workspaceId = useWorkspaceId()
 
   const { mutate: createMessage } = useCreateMessage()
+  const { mutate: generateUploadUrl } = useGenerateUploadUrl()
 
   const handleSubmit = async ({ body, image }: {
     body: string;
@@ -31,17 +42,45 @@ export const ChatInput = ({ placeholder }: ChatInputProps) => {
   }) => {
     try {
       setIsPending(true)
-      await createMessage({
-        workspaceId,
+      editorRef?.current?.enable(false)
+
+      const values: CreateMessageValues = {
         channelId,
-        body
-      }, { throwError: true })
+        workspaceId,
+        body,
+        image: undefined
+      }
+
+      if (image) {
+        const url = await generateUploadUrl({}, { throwError: true })
+
+        if (!url) {
+          throw new Error('Url not found')
+        }
+
+        const result = await fetch(url, {
+          method: 'POST',
+          headers: { "Content-Type": image.type },
+          body: image
+        })
+
+        if (!result.ok) {
+          throw new Error('Fail to upload image')
+        }
+
+        const { storageId } = await result.json()
+
+        values.image = storageId
+      }
+
+      await createMessage(values, { throwError: true })
 
       setEditorKey((prevKey) => prevKey + 1)
     } catch (error) {
       toast.error('Fail to send message')
     } finally {
       setIsPending(false)
+      editorRef?.current?.enable(true)
     }
   }
 
