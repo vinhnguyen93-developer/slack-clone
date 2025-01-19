@@ -2,6 +2,7 @@ import { Toaster } from 'sonner'
 
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 
 import { Modals } from "@/components/modals";
@@ -39,9 +40,11 @@ export default function RootLayout({
         >
           <ConvexClientProvider>
             <JotaiProvider>
-              <Toaster />
-              <Modals />
-              {children}
+              <NuqsAdapter>
+                <Toaster />
+                <Modals />
+                {children}
+              </NuqsAdapter>
             </JotaiProvider>
           </ConvexClientProvider>
         </body>
