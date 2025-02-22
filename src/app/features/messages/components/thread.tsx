@@ -112,6 +112,7 @@ export const Thread = ({
 
       setEditorKey((prevKey) => prevKey + 1)
     } catch (error) {
+      console.log(error)
       toast.error('Fail to send message')
     } finally {
       setIsPending(false)
@@ -229,6 +230,7 @@ export const Thread = ({
                   hideThreadButton={false}
                   threadCount={message.threadCount}
                   threadImage={message.threadImage}
+                  threadName={message.threadName}
                   threadTimestamp={message.threadTimestamp}
                 />
               )
