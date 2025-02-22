@@ -1,8 +1,8 @@
 import { v } from 'convex/values';
 
 import { auth } from './auth';
-import { query, QueryCtx } from './_generated/server';
 import { Id } from './_generated/dataModel';
+import { query, QueryCtx } from './_generated/server';
 
 const populateUser = (ctx: QueryCtx, id: Id<'users'>) => {
   return ctx.db.get(id);
@@ -13,6 +13,8 @@ export const getById = query({
     id: v.id('members'),
   },
   handler: async (ctx, args) => {
+    console.log(args);
+
     const userId = await auth.getUserId(ctx);
 
     if (!userId) {
@@ -36,7 +38,9 @@ export const getById = query({
       return null;
     }
 
-    const user = await populateUser(ctx, member.userId);
+    const user = await ctx.db.get(member.userId);
+
+    console.log(user);
 
     if (!user) {
       return null;
@@ -44,7 +48,7 @@ export const getById = query({
 
     return {
       ...member,
-      userId,
+      user,
     };
   },
 });

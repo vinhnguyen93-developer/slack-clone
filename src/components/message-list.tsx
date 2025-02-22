@@ -4,6 +4,7 @@ import { differenceInMinutes, format, isToday, isYesterday } from 'date-fns'
 
 import { Message } from './message';
 import { ChannelHero } from './channel-hero';
+import { ConversationHero } from './conversation-hero';
 import { Id } from '../../convex/_generated/dataModel';
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
 
@@ -143,6 +144,12 @@ export const MessageList = ({
         <ChannelHero
           name={channelName}
           creationTime={channelCreationTime}
+        />
+      )}
+      {variant === 'conversation' && (
+        <ConversationHero
+          name={memberName}
+          image={memberImage}
         />
       )}
     </div>
