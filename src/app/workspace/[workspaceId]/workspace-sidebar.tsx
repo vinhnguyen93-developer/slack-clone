@@ -28,10 +28,12 @@ export const WorkspaceSidebar = () => {
 
   const [_open, setOpen] = useCreateChannelModal()
 
+  console.log(_open);
+
   const { data: member, isLoading: memberLoading } = useCurrentMember({ workspaceId })
-  const { data: channels, isLoading: channelsLoading } = UseGetChannels({ workspaceId })
+  const { data: channels } = UseGetChannels({ workspaceId })
   const { data: workspace, isLoading: workspaceLoading } = useGetWorkspace({ id: workspaceId })
-  const { data: members, isLoading: membersLoading } = useGetMembers({ workspaceId })
+  const { data: members } = useGetMembers({ workspaceId })
 
   if (memberLoading || workspaceLoading) {
     return (
